@@ -1,0 +1,24 @@
+name: viam_vnc
+description: "A VNC viewer for Viam machines"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  window_manager: ^0.4.2
+  viam_sdk: ^0.1.0
+  path_provider: ^2.1.5
+  flutter_rfb: ^0.6.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  rename_app: ^1.6.2
+
+flutter:
+  uses-material-design: true
