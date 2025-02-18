@@ -61,7 +61,7 @@ class _LocationState extends State<LocationScreen> {
       appBar: AppBar(title: Text(widget.location.name)),
       body:
           _isLoading
-              ? CircularProgressIndicator.adaptive()
+              ? const Center(child: CircularProgressIndicator.adaptive())
               : ListView.builder(
                 itemCount: widget.locations.length + robots.length,
                 itemBuilder: (_, index) {

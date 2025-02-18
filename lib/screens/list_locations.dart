@@ -67,7 +67,7 @@ class _ListLocationsState extends State<ListLocationsScreen> {
       ),
       body:
           _isLoading
-              ? const CircularProgressIndicator.adaptive()
+              ? const Center(child: CircularProgressIndicator.adaptive())
               : ListView.builder(
                 itemCount: parentLocations.length,
                 itemBuilder: (_, index) {

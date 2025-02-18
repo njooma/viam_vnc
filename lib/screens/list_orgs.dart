@@ -46,7 +46,7 @@ class _ListOrgsState extends State<ListOrgsScreen> {
       appBar: AppBar(title: const Text("Organizations")),
       body:
           _isLoading
-              ? const CircularProgressIndicator.adaptive()
+              ? const Center(child: CircularProgressIndicator.adaptive())
               : ListView.builder(
                 itemCount: organizations.length,
                 itemBuilder: (_, index) {

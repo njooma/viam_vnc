@@ -56,6 +56,9 @@ Future<void> _downloadCLI(File downloadFile) async {
 }
 
 Future<void> _makeExecutable(File file) async {
+  if (file.path.contains(".exe")) {
+    return;
+  }
   final process = await Process.run("chmod", ["+x", file.path]);
   final exitCode = process.exitCode;
   if (exitCode != 0) {
