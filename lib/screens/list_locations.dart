@@ -28,15 +28,15 @@ class _ListLocationsState extends State<ListLocationsScreen> {
 
   Future<void> _initState() async {
     final locations = await widget._viam.appClient.listLocations(widget.org.id);
-    if (locations.length == 1) {
-      return _navigateToLocation(locations.first);
-    }
     setState(() {
       this.locations = locations;
       parentLocations =
           locations.where((loc) => loc.parentLocationId.isEmpty).toList();
       _isLoading = false;
     });
+    if (locations.length == 1) {
+      return _navigateToLocation(locations.first);
+    }
   }
 
   void _navigateToLocation(Location location) {
