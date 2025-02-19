@@ -53,7 +53,6 @@ class _RobotState extends State<RobotScreen> with WindowListener {
     });
 
     tunnelProc = await Process.start(viamCLI, [
-      "--debug",
       "machine",
       "part",
       "tunnel",
