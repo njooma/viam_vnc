@@ -134,7 +134,7 @@ class _RobotState extends State<RobotScreen> with WindowListener {
   }
 
   Future<void> launchVNC() async {
-    await launchUrlString("vnc://:$_vncPassword@0.0.0.0:5901");
+    await launchUrlString("vnc://:$_vncPassword@127.0.0.1:5901");
   }
 
   Widget logsContainer(Widget logsList) {
@@ -171,13 +171,15 @@ class _RobotState extends State<RobotScreen> with WindowListener {
       body: Column(
         children: [
           if (!tunnelReady)
-            Expanded(child: CircularProgressIndicator.adaptive()),
+            Expanded(
+              child: Center(child: CircularProgressIndicator.adaptive()),
+            ),
           if (tunnelReady && !widget._useNativeVNC)
             Expanded(
               child: InteractiveViewer(
                 constrained: true,
                 child: RemoteFrameBufferWidget(
-                  hostName: "0.0.0.0",
+                  hostName: "127.0.0.1",
                   port: 5901,
                   password: _vncPassword,
                 ),
