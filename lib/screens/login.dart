@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:viam_sdk/viam_sdk.dart';
 
 import '../cli_downloader.dart';
@@ -35,11 +36,24 @@ class _LoginState extends State<LoginScreen> {
         _isLoading = false;
       });
     } else {
-      navigateToOrgs();
+      setState(() {
+        _isLoading = false;
+      });
+      // navigateToOrgs();
     }
   }
 
   Future<void> onPressed() async {
+    final vncURL = "vnc://localhost:5901";
+    final vncURI = Uri.parse(vncURL);
+    final launched = await launchUrlString(vncURL);
+    if (!launched) {
+      setState(() {
+        loginText = "Failed to launch VNC client";
+      });
+    }
+    return;
+
     setState(() {
       _isLoggingIn = true;
     });
