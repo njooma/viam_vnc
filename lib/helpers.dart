@@ -2,12 +2,14 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<String> getCLI({bool forceDownload = false}) async {
   final (os, arch) = _archString();
   final dir = await getApplicationSupportDirectory();
-  String path = "${dir.path}${Platform.pathSeparator}viam-cli";
+  String path = join(dir.path, "viam-cli");
   if (os == "windows") {
     path += ".exe";
   }
@@ -64,4 +66,23 @@ Future<void> _makeExecutable(File file) async {
   if (exitCode != 0) {
     throw Exception("Failed to make file executable: $exitCode");
   }
+}
+
+Future<void> setupVNC() async {
+  if (Platform.isWindows) {
+    final file = File((await getVNCPath())!);
+    if (await file.exists()) {
+      return;
+    }
+    final asset = await rootBundle.load("assets/exe/vncviewer.exe");
+    await file.writeAsBytes(Uint8List.sublistView(asset));
+  }
+}
+
+Future<String?> getVNCPath() async {
+  if (Platform.isWindows) {
+    final dir = await getApplicationSupportDirectory();
+    return join(dir.path, "vncviewer.exe");
+  }
+  return null;
 }

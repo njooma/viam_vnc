@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:viam_sdk/viam_sdk.dart';
 
-import '../cli_downloader.dart';
+import '../helpers.dart';
 import 'list_orgs.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -28,6 +28,7 @@ class _LoginState extends State<LoginScreen> {
 
   Future<void> _initState() async {
     viamCLI = await getCLI(forceDownload: false);
+    await setupVNC();
 
     final process = await Process.run(viamCLI, ["login", "print-access-token"]);
     if (process.exitCode != 0) {

@@ -9,7 +9,7 @@ import 'package:viam_sdk/src/utils.dart';
 import 'package:viam_sdk/viam_sdk.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../cli_downloader.dart';
+import '../helpers.dart';
 
 class RobotScreen extends StatefulWidget {
   final Viam _viam;
@@ -146,12 +146,16 @@ class _RobotState extends State<RobotScreen> with WindowListener {
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url);
     } else if (Platform.isWindows) {
-      final vncExe = "assets\\exe\\vncviewer.exe";
+      final vncExe = await getVNCPath();
+      if (vncExe == null) {
+        return errLog("Could not load external Windows VNC viewer executable");
+      }
       vncProc = await Process.start(vncExe, [
         "-connect",
         "127.0.0.1:5901",
         "-password",
         _vncPassword,
+        "-autoscaling",
       ]);
       vncProc!.stdout.transform(utf8.decoder).forEach((log) {
         stdLog(log);
