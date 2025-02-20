@@ -264,7 +264,9 @@ class _RobotState extends State<RobotScreen> with WindowListener {
           TextButton(onPressed: start, child: Text("Connect")),
         ];
       case _State.connecting:
-        body = [Expanded(child: CircularProgressIndicator.adaptive())];
+        body = [
+          Expanded(child: Center(child: CircularProgressIndicator.adaptive())),
+        ];
       case _State.connected:
         if (!_useExternalVNC) {
           body = [
@@ -273,7 +275,9 @@ class _RobotState extends State<RobotScreen> with WindowListener {
                 constrained: true,
                 maxScale: 10,
                 child: RemoteFrameBufferWidget(
-                  connectingWidget: CircularProgressIndicator.adaptive(),
+                  connectingWidget: Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
                   hostName: "127.0.0.1",
                   port: 5901,
                   password: _vncPassword,
