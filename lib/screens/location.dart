@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:viam_sdk/protos/app/app.dart';
 import 'package:viam_sdk/viam_sdk.dart';
@@ -20,7 +18,6 @@ class LocationScreen extends StatefulWidget {
 class _LocationState extends State<LocationScreen> {
   bool _isLoading = true;
   List<Robot> robots = [];
-  bool _useNativeVNC = false;
 
   @override
   void initState() {
@@ -52,34 +49,15 @@ class _LocationState extends State<LocationScreen> {
   }
 
   void _navigateToRobot(Robot robot) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RobotScreen(widget._viam, robot, _useNativeVNC),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => RobotScreen(widget._viam, robot)));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.location.name),
-        actions: [
-          if (Platform.isMacOS)
-            Row(
-              children: [
-                Text("Use native VNC viewer"),
-                Switch.adaptive(
-                  value: _useNativeVNC,
-                  onChanged:
-                      (isOn) => setState(() {
-                        _useNativeVNC = isOn;
-                      }),
-                ),
-              ],
-            ),
-        ],
-      ),
+      appBar: AppBar(title: Text(widget.location.name)),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator.adaptive())
