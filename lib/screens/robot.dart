@@ -43,6 +43,7 @@ class _RobotState extends State<RobotScreen> with WindowListener {
   final ScrollController _logsController = ScrollController();
 
   Process? tunnelProc;
+  Process? vncProc;
 
   String _vncPassword = "";
 
@@ -137,10 +138,40 @@ class _RobotState extends State<RobotScreen> with WindowListener {
 
   void releaseResources() {
     tunnelProc?.kill();
+    vncProc?.kill();
   }
 
   Future<void> launchVNC() async {
-    await launchUrlString("vnc://:$_vncPassword@127.0.0.1:5901");
+    final url = "vnc://:$_vncPassword@127.0.0.1:5901";
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
+    } else if (Platform.isWindows) {
+      final vncExe = "assets\\exe\\vncviewer.exe";
+      vncProc = await Process.start(vncExe, [
+        "-connect",
+        "127.0.0.1:5901",
+        "-password",
+        _vncPassword,
+      ]);
+      vncProc!.stdout.transform(utf8.decoder).forEach((log) {
+        stdLog(log);
+        _logsController.animateTo(
+          _logsController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 100),
+          curve: Curves.decelerate,
+        );
+      });
+      vncProc!.stderr.transform(utf8.decoder).forEach((log) {
+        errLog(log);
+        _logsController.animateTo(
+          _logsController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 100),
+          curve: Curves.decelerate,
+        );
+      });
+    } else {
+      errLog("Could not launch external VNC viewer");
+    }
   }
 
   Widget logsContainer(Widget logsList) {

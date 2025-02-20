@@ -28,6 +28,7 @@ class _ListLocationsState extends State<ListLocationsScreen> {
 
   Future<void> _initState() async {
     final locations = await widget._viam.appClient.listLocations(widget.org.id);
+    locations.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
       this.locations = locations;
       parentLocations =

@@ -27,6 +27,7 @@ class _LocationState extends State<LocationScreen> {
 
   Future<void> _initState() async {
     final robots = await widget._viam.appClient.listRobots(widget.location.id);
+    robots.sort((a, b) => a.name.compareTo(b.name));
     setState(() {
       this.robots = robots;
       _isLoading = false;
