@@ -25,7 +25,7 @@ class _ListOrgsState extends State<ListOrgsScreen> {
 
   Future<void> _initState() async {
     final orgs = await widget._viam.appClient.listOrganizations();
-    orgs.sort((a, b) => a.name.compareTo(b.name));
+    orgs.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     setState(() {
       organizations = orgs;
       _isLoading = false;
