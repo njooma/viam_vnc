@@ -36,7 +36,7 @@ enum _State { init, connecting, connected }
 class _RobotState extends State<RobotScreen> with WindowListener {
   _State _state = _State.init;
 
-  bool _useExternalVNC = false;
+  bool _useExternalVNC = true;
   bool _debugMode = false;
 
   final List<_Log> logs = [];
@@ -93,18 +93,21 @@ class _RobotState extends State<RobotScreen> with WindowListener {
         );
       });
     });
-    tunnelProc!.stderr
-        .transform(utf8.decoder)
-        .forEach(
-          (log) => setState(() {
-            errLog(log);
-            _logsController.animateTo(
-              _logsController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 100),
-              curve: Curves.decelerate,
-            );
-          }),
+    tunnelProc!.stderr.transform(utf8.decoder).forEach((log) {
+      setState(() {
+        if (log.contains(
+          "Failed to create listener listen tcp: lookup localhost",
+        )) {
+          // TODO: Update HOSTS file to allow localhost
+        }
+        errLog(log);
+        _logsController.animateTo(
+          _logsController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 100),
+          curve: Curves.decelerate,
         );
+      });
+    });
     while (_state != _State.connected) {
       await Future.delayed(Duration(milliseconds: 100));
     }
