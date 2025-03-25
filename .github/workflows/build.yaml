@@ -1,0 +1,65 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job_id:
+    runs-on: windows-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - uses: 'actions/checkout@v4'
+
+      - id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: 'engineering-tools-310515'
+          workload_identity_provider: 'projects/385154741571/locations/global/workloadIdentityPools/ev-signing-id/providers/github-repos-viam-and-labs'
+          service_account: 'ev-code-signing@engineering-tools-310515.iam.gserviceaccount.com'
+
+      - id: 'secrets'
+        uses: 'google-github-actions/get-secretmanager-secrets@v2'
+        with:
+          secrets: |-
+            public_key:projects/385154741571/secrets/ev-code-signing-public-key
+
+      - run: |
+          echo "${{ steps.secrets.outputs.public_key }}" > public_key
+          openssl pkcs7 -print_certs -inform DER -in public_key -out cert.pem
+
+      - name: 'Set up gcloud'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - uses: actions/setup-go@v5
+        with:
+        go-version: '^1.24.1'
+      
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Download Jsign
+        run: wget https://github.com/ebourg/jsign/releases/download/7.1/jsign-7.1.jar
+
+      - name: inno-setup-download
+        uses: pwall2222/inno-setup-download@v0.0.8
+
+      - run: make build
+
+      - name: Sign
+        run: >
+          java -jar jsign-7.1.jar --name Viam VNC Hosts Updater
+                                  --storetype GOOGLECLOUD
+                                  --keystore projects/engineering-tools-310515/locations/global/keyRings/release_signing_key
+                                  --storepass "${{ steps.auth.outputs.auth_token }}"
+                                  --alias ev-code-signing-key/cryptoKeyVersions/1
+                                  --certfile cert.pem hosts_updater.exe
